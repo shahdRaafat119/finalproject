@@ -1,0 +1,167 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  .wrap{font-family:'Inter',sans-serif;display:flex;width:100%;min-height:600px;border-radius:16px;overflow:hidden;background:#0d0120}
+  .left{flex:1.1;background:linear-gradient(145deg,#1a0040 0%,#2d0060 50%,#1a0040 100%);padding:36px 32px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+  .orb1{position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.35) 0%,transparent 70%);top:-60px;left:-80px;pointer-events:none}
+  .orb2{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,0.25) 0%,transparent 70%);bottom:40px;right:-40px;pointer-events:none}
+  .brand{display:flex;align-items:center;gap:10px;position:relative;z-index:2}
+  .brand-icon{width:38px;height:38px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .brand-name{font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.3px}
+  .hero{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+  .tag{display:inline-flex;align-items:center;gap:6px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.4);color:#c4b5fd;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500;width:fit-content}
+  .tag-dot{width:6px;height:6px;border-radius:50%;background:#a855f7}
+  .hero h1{font-size:30px;font-weight:700;color:#fff;line-height:1.2;letter-spacing:-0.5px}
+  .hero h1 span{background:linear-gradient(90deg,#a78bfa,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero p{color:rgba(255,255,255,0.55);font-size:13px;line-height:1.6;max-width:280px}
+
+  /* Laptop mockup */
+  .laptop{background:#1a1a2e;border-radius:14px;padding:14px;width:100%;position:relative;z-index:2;margin:8px 0}
+  .laptop-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .dots{display:flex;gap:5px}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+  .ai-title{font-size:12px;color:#a78bfa;font-weight:500}
+  .laptop-content{background:#16213e;padding:14px;border-radius:10px}
+  .ai-suggestion{background:#1e3a8a;padding:9px 12px;border-radius:8px;margin-bottom:10px;font-size:12px;color:rgba(255,255,255,0.85)}
+  .plan-btn{background:#4ade80;color:#000;border:none;padding:6px 16px;border-radius:9999px;margin-bottom:12px;font-weight:700;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif}
+  .prog-item{margin-bottom:10px;font-size:11px;color:rgba(255,255,255,0.75)}
+  .prog-item:last-child{margin-bottom:0}
+  .prog-track{height:5px;background:rgba(255,255,255,0.1);border-radius:10px;margin-top:4px;overflow:hidden}
+  .robot{position:absolute;bottom:-28px;right:20px;font-size:72px;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.5));line-height:1}
+
+  .stats{display:flex;justify-content:space-around;position:relative;z-index:2;padding-top:38px}
+  .stat{text-align:center}
+  .stat strong{display:block;font-size:18px;font-weight:700;color:#fff}
+  .stat span{font-size:11px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.5px}
+
+  /* Right panel */
+  .right{flex:1;background:#0a0018;display:flex;flex-direction:column;justify-content:center;padding:40px 36px;position:relative}
+  .right::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,0.5),transparent)}
+  .form-header{margin-bottom:24px}
+  .form-header h2{font-size:21px;font-weight:700;color:#fff;margin-bottom:5px;letter-spacing:-0.3px}
+  .form-header p{font-size:13px;color:rgba(255,255,255,0.45)}
+  .form-header a{color:#a78bfa;text-decoration:none;font-weight:500}
+  .socials{display:flex;gap:8px;margin-bottom:20px}
+  .btn-soc{flex:1;padding:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.2s;font-family:'Inter',sans-serif}
+  .btn-soc:hover{background:rgba(255,255,255,0.1)}
+  .divider{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  .divider-line{flex:1;height:1px;background:rgba(255,255,255,0.1)}
+  .divider-text{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.8px;white-space:nowrap}
+  .field{margin-bottom:12px}
+  .field label{font-size:12px;color:rgba(255,255,255,0.5);display:block;margin-bottom:5px;font-weight:500}
+  .field input{width:100%;padding:11px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s,background 0.2s}
+  .field input:focus{border-color:rgba(139,92,246,0.6);background:rgba(139,92,246,0.08)}
+  .field input::placeholder{color:rgba(255,255,255,0.25)}
+  .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .remember{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer}
+  .remember input[type=checkbox]{width:14px;height:14px;accent-color:#8b5cf6;cursor:pointer}
+  .forgot{font-size:12px;color:#a78bfa;text-decoration:none;font-weight:500}
+  .btn-submit{width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:-0.2px;transition:opacity 0.2s,transform 0.15s}
+  .btn-submit:hover{opacity:0.9;transform:translateY(-1px)}
+  .chips{display:flex;gap:8px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+  .chip{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:500}
+</style>
+
+<div class="wrap">
+  <div class="left">
+    <div class="orb1"></div><div class="orb2"></div>
+
+    <div class="brand">
+      <div class="brand-icon">📚</div>
+      <span class="brand-name">StudyWise</span>
+    </div>
+
+    <div class="hero">
+      <div class="tag"><div class="tag-dot"></div> AI-powered learning platform</div>
+      <h1>Learn smarter,<br>achieve <span>more.</span></h1>
+      <p>Your adaptive AI companion that builds personalized study plans and tracks your progress.</p>
+    </div>
+
+    <!-- Laptop with robot -->
+    <div class="laptop">
+      <div class="laptop-header">
+        <div class="dots">
+          <div class="dot r"></div>
+          <div class="dot y"></div>
+          <div class="dot g"></div>
+        </div>
+        <span class="ai-title">StudyWise AI</span>
+      </div>
+      <div class="laptop-content">
+        <div class="ai-suggestion">💡 AI suggests: Study Math first for better retention</div>
+        <button class="plan-btn">Plan my week</button>
+        <div class="prog-item">
+          Math <span style="float:right;color:#4ade80">75%</span>
+          <div class="prog-track"><div style="width:75%;height:100%;background:#4ade80;border-radius:10px"></div></div>
+        </div>
+        <div class="prog-item">
+          Science <span style="float:right;color:#60a5fa">52%</span>
+          <div class="prog-track"><div style="width:52%;height:100%;background:#60a5fa;border-radius:10px"></div></div>
+        </div>
+        <div class="prog-item">
+          History <span style="float:right;color:#34d399">88%</span>
+          <div class="prog-track"><div style="width:88%;height:100%;background:#34d399;border-radius:10px"></div></div>
+        </div>
+      </div>
+      <div class="robot">🤖</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><strong>50K+</strong><span>Students</span></div>
+      <div class="stat"><strong>95%</strong><span>Success</span></div>
+      <div class="stat"><strong>4.9★</strong><span>Rating</span></div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="form-header">
+      <h2>Welcome back 👋</h2>
+      <p>New here? <a href="#">Create a free account →</a></p>
+    </div>
+
+    <div class="socials">
+      <button class="btn-soc">
+        <svg width="13" height="13" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Google
+      </button>
+      <button class="btn-soc">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(255,255,255,0.75)"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </button>
+      <button class="btn-soc">
+        <svg width="13" height="13" viewBox="0 0 23 23"><rect width="11" height="11" fill="#F25022"/><rect x="12" width="11" height="11" fill="#7FBA00"/><rect y="12" width="11" height="11" fill="#00A4EF"/><rect x="12" y="12" width="11" height="11" fill="#FFB900"/></svg>
+        Microsoft
+      </button>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">OR WITH EMAIL</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" placeholder="••••••••">
+    </div>
+
+    <div class="row">
+      <label class="remember"><input type="checkbox" checked> Remember me</label>
+      <a href="#" class="forgot">Forgot password?</a>
+    </div>
+
+    <button class="btn-submit">Sign in to StudyWise →</button>
+
+    <div class="chips">
+      <div class="chip">⚡ Smart study plans</div>
+      <div class="chip">🤖 AI assistance</div>
+      <div class="chip">🎯 Personalized</div>
+    </div>
+  </div>
+</div>
