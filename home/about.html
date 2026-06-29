@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About StudyWise | Revolutionizing Student Productivity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* */
+:root {
+  --purple:    #7c3aed;
+  --purple2:   #a855f7;
+  --cyan:      #0ea5e9;
+  --cyan2:     #22d3ee;
+  --pink:      #ec4899;
+  --green:     #10b981;
+  --transition: 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+[data-theme="dark"] {
+  --bg:        #06000f;
+  --bg2:       #0d0020;
+  --bg3:       #140030;
+  --card:      rgba(20,0,48,0.85);
+  --card2:     rgba(30,10,60,0.9);
+  --border:    rgba(139,92,246,0.2);
+  --text:      #f1f5f9;
+  --text2:     #94a3b8;
+  --text3:     #64748b;
+  --navbar-bg: rgba(6,0,15,0.75);
+  --modal-bg:  rgba(6,0,15,0.97);
+  --input-bg:  rgba(255,255,255,0.06);
+  --input-bdr: rgba(255,255,255,0.12);
+}
+
+[data-theme="light"] {
+  --bg:        #f0f4ff;
+  --bg2:       #e8eeff;
+  --bg3:       #dde6ff;
+  --card:      rgba(255,255,255,0.92);
+  --card2:     rgba(240,244,255,0.95);
+  --border:    rgba(99,102,241,0.25);
+  --text:      #1e1b4b;
+  --text2:     #4338ca;
+  --text3:     #6366f1;
+  --navbar-bg: rgba(240,244,255,0.8);
+  --modal-bg:  rgba(240,244,255,0.98);
+  --input-bg:  rgba(99,102,241,0.07);
+  --input-bdr: rgba(99,102,241,0.2);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; border: none; }
+img { max-width: 100%; display: block; }
+
+/* */
+.section { padding: 100px 24px; position: relative; }
+.section-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+.section-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(14,165,233,0.15));
+  border: 1px solid var(--border);
+  color: var(--purple2);
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800; color: var(--text); line-height: 1.2; margin-bottom: 14px;
+}
+.section-title .grad {
+  background: linear-gradient(90deg, var(--purple2), var(--cyan2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* */
+.navbar {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  width: calc(100% - 48px); max-width: 1200px;
+  background: var(--navbar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border); border-radius: 16px;
+  padding: 0 24px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 1000; transition: all var(--transition);
+}
+.navbar.scrolled { top: 8px; box-shadow: 0 8px 32px rgba(124,58,237,0.2); }
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo-icon {
+  width: 34px; height: 34px; background: linear-gradient(135deg, var(--purple), var(--cyan));
+  border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px;
+}
+.nav-logo-name { font-size: 16px; font-weight: 800; color: var(--text); }
+.nav-links { display: flex; gap: 6px; align-items: center; }
+.nav-link {
+  padding: 7px 14px; display: inline-block; font-size: 13px; font-weight: 500; color: var(--text2);
+  border-radius: 8px; background: none; position: relative; transition: color 0.2s;
+}
+.nav-link::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 2px; background: linear-gradient(90deg, var(--purple), var(--cyan));
+  border-radius: 2px; box-shadow: 0 0 8px var(--cyan); transition: width 0.3s;
+}
+.nav-link:hover { color: var(--text); }
+.nav-link:hover::after, .nav-link.active::after { width: 60%; }
+.nav-link.active { color: var(--text); }
+
+.nav-dropdown { position: relative; }
+.mega-menu {
+  position: absolute; top: 150%; left: 50%; transform: translateX(-50%) translateY(10px);
+  width: 550px; background: var(--card2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 1000;
+}
+.nav-dropdown:hover .mega-menu { top: 100%; opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.mega-card {
+  display: flex; align-items: flex-start; gap: 14px; padding: 14px;
+  background: var(--input-bg); border: 1px solid transparent; border-radius: 12px;
+  transition: all 0.2s; text-decoration: none;
+}
+.mega-card:hover { background: var(--bg3); border-color: var(--cyan); transform: translateY(-3px); }
+.mega-icon {
+  width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(14,165,233,0.15));
+  color: var(--cyan2); display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.mega-text h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.mega-text p { font-size: 12px; color: var(--text2); line-height: 1.4; margin: 0; }
+
+.nav-right { display: flex; align-items: center; gap: 12px; position: relative; }
+.auth-group { display: flex; gap: 10px; align-items: center; }
+.btn-nav-login {
+  padding: 8px 18px; border-radius: 9px; font-size: 13px; font-weight: 600;
+  background: rgba(14,165,233,0.1); color: var(--cyan); border: 1px solid rgba(14,165,233,0.3);
+  transition: all 0.2s; cursor: pointer; font-family: inherit;
+}
+.btn-nav-login:hover { background: rgba(14,165,233,0.2); transform: translateY(-1px); }
+.btn-nav-register {
+  padding: 8px 20px; border-radius: 9px; font-size: 13px; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  box-shadow: 0 4px 15px rgba(236,72,153,0.3); border: none;
+  transition: all 0.2s; cursor: pointer; font-family: inherit;
+}
+.btn-nav-register:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(236,72,153,0.5); }
+
+/* */
+.profile-btn {
+  display: flex; align-items: center; gap: 8px; background: var(--input-bg);
+  border: 1px solid var(--input-bdr); border-radius: 10px; padding: 5px 12px 5px 6px;
+  color: var(--text); font-size: 13px; font-weight: 600; transition: background 0.2s;
+}
+.profile-btn:hover { background: var(--bg3); }
+.profile-avatar {
+  width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--cyan));
+  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff;
+}
+.profile-dropdown {
+  position: absolute; top: calc(100% + 10px); right: 0; width: 220px;
+  background: var(--card2); border: 1px solid var(--border); border-radius: 14px;
+  padding: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); display: none;
+  animation: dropIn 0.2s ease-out;
+}
+.profile-dropdown.open { display: block; }
+
+/* The Toggle Switch */
+.theme-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 9px; }
+.theme-toggle-label { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+.toggle-switch {
+  width: 40px; height: 22px; border-radius: 11px; background: var(--input-bg); border: 1px solid var(--input-bdr);
+  position: relative; cursor: pointer; transition: background 0.3s;
+}
+.toggle-switch.on { background: linear-gradient(90deg, var(--purple), var(--cyan)); border-color: transparent; }
+.toggle-knob {
+  position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; transition: transform 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.toggle-switch.on .toggle-knob { transform: translateX(18px); }
+
+/* */
+.about-hero {
+  position: relative; min-height: 70vh; display: flex; align-items: center;
+  justify-content: center; text-align: center; padding-top: 80px;
+  overflow: hidden;
+}
+.about-hero-bg {
+  position: absolute; inset: 0;
+  background: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+  filter: brightness(0.3) saturate(0.8);
+}
+[data-theme="light"] .about-hero-bg { filter: brightness(0.6); }
+.about-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(6,0,15,0.2) 0%, var(--bg) 100%);
+}
+.about-title { font-size: clamp(40px, 6vw, 72px); font-weight: 900; color: #fff; margin-bottom: 20px; animation: fadeUp 0.8s ease-out; }
+.about-sub { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto; line-height: 1.6; animation: fadeUp 0.8s ease-out 0.2s both; }
+
+/* Mission & Vision Cards */
+.mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: -60px; position: relative; z-index: 10; }
+.mv-card {
+  background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--border);
+  border-radius: 24px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+}
+.mv-card:hover { transform: translateY(-5px); border-color: var(--cyan); }
+.mv-icon {
+  width: 60px; height: 60px; border-radius: 16px; margin-bottom: 24px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(14,165,233,0.15));
+  color: var(--cyan2); display: flex; align-items: center; justify-content: center; font-size: 28px;
+}
+.mv-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+.mv-text { font-size: 15px; color: var(--text2); line-height: 1.7; }
+
+/* */
+.feature-timeline { margin-top: 80px; position: relative; }
+/* The central connecting line */
+.feature-timeline::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 2px; background: linear-gradient(180deg, var(--purple), var(--cyan));
+  opacity: 0.3;
+}
+.timeline-item {
+  display: flex; justify-content: space-between; align-items: center; width: 100%;
+  margin-bottom: 80px; position: relative; opacity: 0; transform: translateY(40px);
+}
+.timeline-item.visible { opacity: 1; transform: translateY(0); transition: all 0.8s ease-out; }
+/* Alternate the content sides */
+.timeline-item:nth-child(even) { flex-direction: row-reverse; }
+
+.timeline-content { width: 45%; }
+.timeline-img {
+  width: 45%; border-radius: 20px; overflow: hidden; position: relative;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 1px solid var(--border);
+}
+.timeline-img img { width: 100%; height: auto; transition: transform 0.5s; }
+.timeline-item:hover .timeline-img img { transform: scale(1.05); }
+
+/* The dot on the timeline */
+.timeline-dot {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--bg); border: 4px solid var(--cyan2);
+  box-shadow: 0 0 15px var(--cyan); z-index: 2;
+}
+
+.t-tag {
+  display: inline-block; padding: 4px 12px; background: rgba(14,165,233,0.1);
+  color: var(--cyan); border-radius: 20px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; margin-bottom: 12px; border: 1px solid rgba(14,165,233,0.2);
+}
+.t-title { font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+.t-desc { font-size: 15px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
+.t-list { list-style: none; }
+.t-list li {
+  display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text); margin-bottom: 12px;
+}
+.t-list li::before {
+  content: '✓'; color: var(--purple2); font-weight: bold; background: rgba(168,85,247,0.1);
+  width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px;
+}
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.footer {
+  background: #030008; padding: 60px 24px 32px;
+  border-top: 1px solid rgba(124,58,237,0.2);
+}
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.footer-brand p { font-size: 13px; color: #64748b; line-height: 1.7; margin-top: 12px; max-width: 240px; }
+.footer-col h4 { font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 13px; color: #64748b; margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--purple2); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); }
+.footer-copy { font-size: 12px; color: #64748b; }
+.footer-quote { font-size: 12px; color: #64748b; font-style: italic; }
+/* */
+.chat-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 999; }
+.chat-btn { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--cyan)); display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 8px 24px rgba(124,58,237,0.45); cursor: pointer; transition: transform 0.2s; position: relative; color: #fff; }
+.chat-btn:hover { transform: scale(1.1); }
+.chat-panel { position: absolute; bottom: 68px; right: 0; width: 340px; background: var(--card2); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; animation: chatOpen 0.3s ease-out; }
+.chat-panel.open { display: flex; }
+.chat-header { background: linear-gradient(135deg, var(--purple), var(--cyan)); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; }
+.chat-header-left { display: flex; align-items: center; gap: 10px; }
+.chat-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; color:#fff;}
+.chat-header-name { font-size: 13px; font-weight: 700; color: #fff; }
+.chat-header-status { font-size: 11px; color: rgba(255,255,255,0.7); }
+.chat-close { background: none; color: rgba(255,255,255,0.7); font-size: 18px; cursor: pointer; }
+.chat-messages { flex: 1; padding: 16px; overflow-y: auto; min-height: 220px; max-height: 280px; display: flex; flex-direction: column; gap: 10px; }
+.chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
+.chat-msg.bot { background: var(--input-bg); border: 1px solid var(--input-bdr); color: var(--text); align-self: flex-start; border-bottom-left-radius: 4px; }
+.chat-msg.user { background: linear-gradient(135deg, var(--purple), var(--cyan)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+.chat-input-row { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.chat-input { flex: 1; background: var(--input-bg); border: 1px solid var(--input-bdr); border-radius: 10px; padding: 9px 12px; color: var(--text); font-size: 13px; font-family: inherit; outline: none; }
+.chat-send { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--purple), var(--cyan)); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+/* Modals Overlay Base */
+.modal-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: var(--modal-bg); border: 1px solid var(--border); border-radius: 24px; padding: 36px 32px; width: 100%; max-width: 420px; animation: modalIn 0.3s ease-out; position: relative; }
+@keyframes modalIn { from{opacity:0;transform:scale(0.94) translateY(16px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--input-bg); color: var(--text2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.modal-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 22px; }
+.modal-sub a { color: var(--purple2); cursor: pointer; }
+.mfield { margin-bottom: 13px; }
+.mfield label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px; font-weight: 500; }
+.mfield-wrap { position: relative; }
+.mfield input { width: 100%; background: var(--input-bg); border: 1px solid var(--input-bdr); border-radius: 10px; padding: 10px 12px 10px 36px; color: var(--text); font-size: 13px; outline: none; }
+.mfield-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); }
+.btn-modal-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--purple), var(--cyan)); border-radius: 10px; color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 12px; margin-top: 10px; }
+.mpage { display: none; } .mpage.active { display: block; }
+.modal-tabs { display: flex; gap: 4px; margin-bottom: 22px; background: var(--input-bg); border-radius: 12px; padding: 4px; }
+.modal-tab { flex: 1; padding: 8px; border-radius: 9px; font-size: 12px; font-weight: 600; color: var(--text2); background: none; cursor: pointer; }
+.modal-tab.active { background: var(--card2); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+/* Footer */
+.footer { background: #030008; padding: 60px 24px 32px; border-top: 1px solid rgba(124,58,237,0.2); margin-top: 80px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; text-align: center; }
+.footer-copy { font-size: 12px; color: #64748b; }
+
+@keyframes fadeUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
+
+/* Mobile fixes */
+@media(max-width: 768px) {
+  .mission-grid { grid-template-columns: 1fr; }
+  .feature-timeline::before { left: 20px; }
+  .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; align-items: flex-start; padding-left: 50px; }
+  .timeline-content, .timeline-img { width: 100%; }
+  .timeline-dot { left: 20px; top: 0; transform: translate(-50%, 0); }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">📚</div>
+    <span class="nav-logo-name">StudyWise</span>
+  </div>
+  
+  <div class="nav-links">
+    <a href="home.html" class="nav-link">Home</a>
+    <div class="nav-dropdown">
+      <a href="#" class="nav-link" style="cursor: pointer;">Features <span>▼</span></a>
+      <div class="mega-menu">
+        <a href="smart-scheduler.html" class="mega-card">
+          <div class="mega-icon">📅</div>
+          <div class="mega-text"><h4>Smart Scheduler</h4><p>Constraint-Based Algorithm</p></div>
+        </a>
+        <a href="adaptive-logic.html" class="mega-card">
+          <div class="mega-icon">🔄</div>
+          <div class="mega-text"><h4>Adaptive Logic</h4><p>Auto-Rescheduling Engine</p></div>
+        </a>
+        <a href="analytics.html" class="mega-card">
+          <div class="mega-icon">📊</div>
+          <div class="mega-text"><h4>Progress Analytics</h4><p>Study Velocity & Heatmaps</p></div>
+        </a>
+      </div>
+    </div>
+    <a href="ai_syllabus_parser.html" class="nav-link">AI Parser</a>
+    <a href="about.html" class="nav-link active">About</a>
+  </div>
+
+  <div class="nav-right">
+    <!-- Auth Buttons -->
+    <div class="auth-group" id="btn-open-auth">
+      <button class="btn-nav-login" onclick="openModal('login')">Log In</button>
+      <button class="btn-nav-register" onclick="openModal('register')">Register Free</button>
+    </div>
+    
+    <!-- Profile Dropdown (Shows when logged in) -->
+    <div id="profile-area" style="display:none; position:relative;">
+      <button class="profile-btn" id="profileBtn">
+        <div class="profile-avatar" id="profileAvatar">S</div>
+        <span id="profileName">Student</span>
+        <span class="profile-chevron">▼</span>
+      </button>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="dropdown-header">
+          <div class="dropdown-name" id="dropdownName">Name</div>
+          <div class="dropdown-email" id="dropdownEmail">email@edu.com</div>
+        </div>
+        <div class="theme-toggle-row">
+          <span class="theme-toggle-label"><span>🌙</span> Dark Mode</span>
+          <div class="toggle-switch on" id="themeToggle" onclick="toggleTheme()">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+        <button class="dropdown-item" onclick="logout()" style="margin-top:8px;"><span>🚪</span> Sign Out</button>
+      </div>
+    </div>
+    
+    <!-- Theme Toggle (Shows when NOT logged in) -->
+    <div id="nav-theme-btn" style="display:flex;align-items:center;">
+      <div class="toggle-switch on" id="themeToggleNav" onclick="toggleTheme()" style="margin-left:8px;">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- -->
+<section class="about-hero">
+  <div class="about-hero-bg"></div>
+  <div class="about-hero-overlay"></div>
+  <div class="section-inner" style="text-align: center;">
+    <div class="section-tag" style="animation: fadeUp 0.8s ease-out;">✦ Who We Are</div>
+    <h1 class="about-title">Revolutionizing <span class="grad">Student Productivity</span></h1>
+    <p class="about-sub">StudyWise isn't just another to-do list. We bridge the gap between heavy academic workloads and the limited hours in a student's day using state-of-the-art AI algorithms.</p>
+  </div>
+</section>
+
+<section class="section pt-0">
+  <div class="section-inner">
+    <div class="mission-grid">
+      <div class="mv-card">
+        <div class="mv-icon">🎯</div>
+        <h3 class="mv-title">Our Mission</h3>
+        <p class="mv-text">To democratize access to smart educational tools. We want to eliminate study burnout by providing students with an intelligent engine that organizes their academic life automatically, letting them focus solely on learning.</p>
+      </div>
+      <div class="mv-card">
+        <div class="mv-icon">👁️</div>
+        <h3 class="mv-title">Our Vision</h3>
+        <p class="mv-text">To become the global standard for academic time management. We envision a future where no student fails a class or misses a deadline simply because of poor planning or overwhelming schedules.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- -->
+<section class="section" style="background: var(--bg2);">
+  <div class="section-inner">
+    <div style="text-align:center; margin-bottom: 60px;">
+      <div class="section-tag">✦ Core Engine</div>
+      <h2 class="section-title">The Anatomy of <span class="grad">StudyWise</span></h2>
+      <p class="section-sub" style="margin: 0 auto;">Discover exactly how every feature is engineered to guarantee your academic success.</p>
+    </div>
+
+    <div class="feature-timeline">
+      
+      <!-- Feature 1 -->
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="t-tag">Step 1: Data Extraction</span>
+          <h3 class="t-title">AI Syllabus Parser</h3>
+          <p class="t-desc">Forget manual data entry. Upload your PDF syllabus, and our Azure-backed AI instantly extracts critical dates, assignment weights, and lecture topics.</p>
+          <ul class="t-list">
+            <li>Extracts reading materials and deadlines</li>
+            <li>Identifies exam dates automatically</li>
+            <li>Creates structured DB records in seconds</li>
+          </ul>
+        </div>
+        <div class="timeline-img">
+          <!-- صورة تعبر عن الذكاء الاصطناعي وقراءة البيانات -->
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" alt="AI parsing documents">
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="t-tag">Step 2: Processing</span>
+          <h3 class="t-title">Constraint-Based Scheduler</h3>
+          <p class="t-desc">Our C# Interval Scheduling Algorithm acts as your personal manager. You input when you are busy (classes, work), and the engine finds the optimal gaps for studying.</p>
+          <ul class="t-list">
+            <li>Prevents scheduling conflicts automatically</li>
+            <li>Balances heavy and light subjects</li>
+            <li>Respects your personal "off" hours</li>
+          </ul>
+        </div>
+        <div class="timeline-img">
+          <!-- صورة تعبر عن التقويم والجدولة والتخطيط -->
+          <img src="https://images.unsplash.com/photo-1611224885990-ab7363d1f2a9?auto=format&fit=crop&w=800&q=80" alt="Calendar scheduling logic">
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="t-tag">Step 3: Real-time Adaptation</span>
+          <h3 class="t-title">Adaptive "Life Happens" Logic</h3>
+          <p class="t-desc">Missed a day? Got sick? No problem. The system dynamically shifts your remaining workload across future available slots without overlapping existing tasks.</p>
+          <ul class="t-list">
+            <li>Real-time background recalculation</li>
+            <li>No guilt-tripping for missed tasks</li>
+            <li>Maintains long-term exam readiness</li>
+          </ul>
+        </div>
+        <div class="timeline-img">
+          <!-- صورة تعبر عن التكنولوجيا المرنة وتغيير المسارات -->
+          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Data analytics adjusting">
+        </div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <span class="t-tag">Step 4: Insights</span>
+          <h3 class="t-title">Progress Analytics</h3>
+          <p class="t-desc">Visualize your academic health. Our complex LINQ queries feed beautiful dashboards showing you exactly where you stand, preventing burnout through gamification.</p>
+          <ul class="t-list">
+            <li>Study velocity tracking</li>
+            <li>Subject heatmaps to spot weaknesses</li>
+            <li>Streak counters to build consistency</li>
+          </ul>
+        </div>
+        <div class="timeline-img">
+          <!-- صورة تعبر عن لوحة تحليلات ورسومات بيانية -->
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Analytics Dashboard">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:0">
+          <div class="nav-logo-icon">📚</div>
+          <span class="nav-logo-name">StudyWise</span>
+        </div>
+        <p>AI-powered learning companion helping students worldwide achieve their academic goals through smart planning and personalized study.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#">Features</a><a href="#">AI Tutor</a><a href="#">Study Groups</a><a href="#">Mobile App</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Study Tips Blog</a><a href="#">Help Center</a><a href="#">API Docs</a><a href="#">Community</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About Us</a><a href="#">Careers</a><a href="#">Privacy</a><a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 StudyWise. All rights reserved.</span>
+      <span class="footer-quote" id="footerQuote"></span>
+    </div>
+  </div>
+</footer>
+<!-- -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="nav-logo" style="justify-content: center; margin-bottom: 20px;">
+      <div class="nav-logo-icon">📚</div>
+      <span class="nav-logo-name">StudyWise</span>
+    </div>
+    <span class="footer-copy">© 2026 StudyWise AI. Designed to perfection.</span>
+  </div>
+</footer>
+
+
+<div class="chat-wrap">
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <div class="chat-header-name">StudyWise AI Tutor</div>
+          <div class="chat-header-status">● Online</div>
+        </div>
+      </div>
+      <button class="chat-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">Hi! Have questions about how StudyWise works? Ask me anything!</div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChat()">
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+  <div class="chat-btn" onclick="toggleChat()">🤖</div>
+</div>
+
+<!-- -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="modal-tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <div class="mpage active" id="mpage-login">
+      <div class="modal-title">Welcome Back</div>
+      <form onsubmit="handleLogin(event)">
+        <div class="mfield">
+          <label>Email</label>
+          <div class="mfield-wrap">
+            <span class="mfield-icon">✉</span>
+            <input type="email" id="login-email" placeholder="you@edu.com" required>
+          </div>
+        </div>
+        <div class="mfield">
+          <label>Password</label>
+          <div class="mfield-wrap">
+            <span class="mfield-icon">🔒</span>
+            <input type="password" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-modal-submit">Sign In</button>
+      </form>
+    </div>
+
+    <div class="mpage" id="mpage-register">
+      <div class="modal-title">Join StudyWise</div>
+      <form onsubmit="handleRegister(event)">
+        <div class="mfield">
+          <label>Name</label>
+          <div class="mfield-wrap"><span class="mfield-icon">👤</span><input type="text" id="reg-name" required></div>
+        </div>
+        <div class="mfield">
+          <label>Email</label>
+          <div class="mfield-wrap"><span class="mfield-icon">✉</span><input type="email" id="reg-email" required></div>
+        </div>
+        <div class="mfield">
+          <label>Password</label>
+          <div class="mfield-wrap"><span class="mfield-icon">🔒</span><input type="password" required></div>
+        </div>
+        <button type="submit" class="btn-modal-submit">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- -->
+<script>
+// Scroll & Intersection Observer for Timeline Animations
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.timeline-item').forEach(el => io.observe(el));
+
+// Theme Toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelectorAll('[id^="themeToggle"]').forEach(t => t.classList.toggle('on', !isDark));
+  localStorage.setItem('sw_theme', isDark ? 'light' : 'dark');
+}
+(function(){
+  const saved = localStorage.getItem('sw_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const on = saved === 'dark';
+  document.querySelectorAll('[id^="themeToggle"]').forEach(t => t.classList.toggle('on', on));
+})();
+
+// Footer Quotes
+const quotes=[
+  '"The secret of getting ahead is getting started." — Mark Twain',
+  '"Study hard, for the well is deep." — Richard Baxter',
+  '"An investment in knowledge pays the best interest." — Benjamin Franklin',
+  '"Education is the most powerful weapon you can use." — Nelson Mandela',
+  '"The more that you read, the more things you will know." — Dr. Seuss',
+];
+const quoteEl = document.getElementById('footerQuote');
+if(quoteEl) quoteEl.textContent=quotes[Math.floor(Math.random()*quotes.length)];
+
+// Chat logic
+let chatOpen = false;
+function toggleChat(){
+  chatOpen = !chatOpen;
+  document.getElementById('chatPanel').classList.toggle('open', chatOpen);
+}
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim(); if(!msg) return;
+  const msgs = document.getElementById('chatMessages');
+  msgs.innerHTML += `<div class="chat-msg user">${msg}</div>`;
+  input.value = '';
+  setTimeout(() => {
+    msgs.innerHTML += `<div class="chat-msg bot">This is a simulated AI response. Connect your Gemini API to answer questions about: "${msg}"</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1000);
+}
+
+// Modals & Auth Logic (Simulating the Backend Token Storage)
+function openModal(tab) {
+  document.getElementById('authModal').classList.add('open');
+  switchTab(tab);
+}
+function closeModal() { document.getElementById('authModal').classList.remove('open'); }
+function switchTab(tab) {
+  ['login','register'].forEach(t => {
+    document.getElementById('mpage-'+t)?.classList.toggle('active', t===tab);
+    document.getElementById('tab-'+t)?.classList.toggle('active', t===tab);
+  });
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const name = email.split('@')[0];
+  loginUser(name, email);
+  closeModal();
+}
+function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  loginUser(name, email);
+  closeModal();
+}
+
+// This function acts like saving the JWT token and updating the UI
+function loginUser(name, email) {
+  localStorage.setItem('sw_user', JSON.stringify({name,email}));
+  document.getElementById('btn-open-auth').style.display = 'none';
+  document.getElementById('nav-theme-btn').style.display = 'none';
+  document.getElementById('profile-area').style.display = 'block';
+  
+  const initial = name.charAt(0).toUpperCase();
+  document.getElementById('profileAvatar').textContent = initial;
+  document.getElementById('profileName').textContent = name.substring(0,6);
+  document.getElementById('dropdownName').textContent = name;
+  document.getElementById('dropdownEmail').textContent = email;
+}
+
+function logout() {
+  localStorage.removeItem('sw_user');
+  document.getElementById('profile-area').style.display = 'none';
+  document.getElementById('btn-open-auth').style.display = 'flex';
+  document.getElementById('nav-theme-btn').style.display = 'flex';
+  document.getElementById('profileDropdown').classList.remove('open');
+}
+
+// On page load, check if user is logged in
+(function(){
+  const u = JSON.parse(localStorage.getItem('sw_user') || 'null');
+  if(u) loginUser(u.name, u.email);
+})();
+
+// Profile Dropdown Toggle
+document.getElementById('profileBtn')?.addEventListener('click', function(e){
+  e.stopPropagation();
+  document.getElementById('profileDropdown').classList.toggle('open');
+});
+document.addEventListener('click', () => {
+  document.getElementById('profileDropdown')?.classList.remove('open');
+});
+</script>
+</body>
+</html>

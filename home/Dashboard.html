@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyWise — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --purple:    #7c3aed;
+  --purple2:   #a855f7;
+  --purple3:   #6d28d9;
+  --cyan:      #0ea5e9;
+  --cyan2:     #22d3ee;
+  --pink:      #ec4899;
+  --green:     #10b981;
+  --amber:     #f59e0b;
+  --red:       #ef4444;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="dark"] {
+  --bg:        #06000f;
+  --bg2:       #0d0020;
+  --bg3:       #140030;
+  --bg4:       #1a003d;
+  --card:      rgba(20,0,48,0.9);
+  --card2:     rgba(30,10,60,0.95);
+  --sidebar:   rgba(10,0,25,0.97);
+  --border:    rgba(139,92,246,0.18);
+  --border2:   rgba(139,92,246,0.35);
+  --text:      #f1f5f9;
+  --text2:     #94a3b8;
+  --text3:     #64748b;
+  --input-bg:  rgba(255,255,255,0.05);
+  --input-bdr: rgba(255,255,255,0.1);
+  --glow:      rgba(124,58,237,0.15);
+}
+[data-theme="light"] {
+  --bg:        #f0f4ff;
+  --bg2:       #e8eeff;
+  --bg3:       #dde6ff;
+  --bg4:       #d0daff;
+  --card:      rgba(255,255,255,0.95);
+  --card2:     rgba(240,244,255,0.98);
+  --sidebar:   rgba(15,5,40,0.97);
+  --border:    rgba(99,102,241,0.2);
+  --border2:   rgba(99,102,241,0.4);
+  --text:      #1e1b4b;
+  --text2:     #4338ca;
+  --text3:     #6366f1;
+  --input-bg:  rgba(99,102,241,0.06);
+  --input-bdr: rgba(99,102,241,0.18);
+  --glow:      rgba(99,102,241,0.08);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  transition:background var(--transition),color var(--transition);
+  overflow-x:hidden;
+  display:flex;
+  min-height:100vh;
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  width:260px;
+  min-width:260px;
+  background:var(--sidebar);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  top:0;left:0;bottom:0;
+  z-index:100;
+  transition:transform var(--transition);
+  overflow:hidden;
+}
+.sidebar::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:200px;
+  background:radial-gradient(ellipse at top left,rgba(124,58,237,0.25),transparent 70%);
+  pointer-events:none;
+}
+.sidebar-logo{
+  padding:24px 20px 20px;
+  display:flex;align-items:center;gap:11px;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-logo-icon{
+  width:38px;height:38px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.sidebar-logo-name{font-size:17px;font-weight:800;color:#fff;}
+.sidebar-logo-ver{font-size:10px;color:rgba(255,255,255,0.35);margin-left:auto;background:rgba(124,58,237,0.2);padding:2px 7px;border-radius:6px;}
+
+.sidebar-user{
+  padding:16px 20px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:#fff;flex-shrink:0;
+  border:2px solid rgba(124,58,237,0.4);
+}
+.sidebar-username{font-size:14px;font-weight:700;color:#fff;}
+.sidebar-role{font-size:11px;color:rgba(255,255,255,0.4);}
+.sidebar-status{
+  display:flex;align-items:center;gap:5px;
+  font-size:10px;color:var(--green);margin-top:2px;
+}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.sidebar-nav{flex:1;padding:14px 12px;overflow-y:auto;}
+.sidebar-nav::-webkit-scrollbar{width:3px;}
+.sidebar-nav::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+.nav-section-label{
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:rgba(255,255,255,0.25);
+  padding:8px 10px 6px;margin-top:8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:11px;
+  font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);
+  cursor:pointer;transition:all 0.2s;
+  position:relative;text-decoration:none;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:rgba(124,58,237,0.12);color:rgba(255,255,255,0.85);}
+.nav-item.active{
+  background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(14,165,233,0.15));
+  color:#fff;border:1px solid rgba(124,58,237,0.3);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:linear-gradient(180deg,var(--purple),var(--cyan));
+  border-radius:0 3px 3px 0;
+}
+.nav-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-size:10px;font-weight:700;
+  padding:2px 7px;border-radius:10px;
+}
+.nav-badge.green{background:linear-gradient(135deg,var(--green),#34d399);}
+.nav-badge.amber{background:linear-gradient(135deg,var(--amber),#fbbf24);}
+
+.sidebar-streak{
+  margin:12px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(14,165,233,0.15));
+  border:1px solid rgba(124,58,237,0.25);
+  border-radius:14px;padding:14px;
+}
+.streak-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.streak-fire{font-size:22px;}
+.streak-num{font-size:22px;font-weight:900;color:#fff;}
+.streak-label{font-size:11px;color:rgba(255,255,255,0.5);}
+.streak-days{display:flex;gap:4px;margin-top:6px;}
+.streak-day{
+  flex:1;height:6px;border-radius:3px;
+  background:rgba(255,255,255,0.08);
+}
+.streak-day.done{background:linear-gradient(90deg,var(--purple),var(--cyan));}
+.streak-day.today{background:var(--amber);}
+
+.sidebar-bottom{
+  padding:12px;
+  border-top:1px solid var(--border);
+}
+.sidebar-bottom-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:10px;
+  font-size:12px;color:rgba(255,255,255,0.4);
+  cursor:pointer;transition:all 0.2s;
+}
+.sidebar-bottom-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);}
+
+/* ═══ MAIN ═══ */
+.main{
+  margin-left:260px;
+  flex:1;
+  display:flex;flex-direction:column;
+  min-height:100vh;
+}
+
+/* ═══ TOPBAR ═══ */
+.topbar{
+  background:rgba(6,0,15,0.8);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+[data-theme="light"] .topbar{background:rgba(240,244,255,0.85);}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.topbar-title{font-size:18px;font-weight:800;color:var(--text);}
+.topbar-sub{font-size:12px;color:var(--text3);}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);}
+.breadcrumb span{color:var(--text2);}
+.breadcrumb .sep{opacity:0.4;}
+
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  border-radius:10px;padding:7px 14px;
+  font-size:13px;color:var(--text3);
+  transition:border-color 0.2s;cursor:text;
+}
+.topbar-search:hover{border-color:var(--border2);}
+.topbar-search input{background:none;border:none;outline:none;color:var(--text);font-size:13px;font-family:inherit;width:160px;}
+.topbar-search input::placeholder{color:var(--text3);}
+
+.topbar-btn{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;position:relative;
+  transition:all 0.2s;
+}
+.topbar-btn:hover{background:var(--bg3);border-color:var(--border2);}
+.notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--pink);border:2px solid var(--bg);
+}
+.theme-btn{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;
+  transition:all 0.2s;
+}
+.theme-btn:hover{background:var(--bg3);}
+
+/* ═══ PAGE CONTENT ═══ */
+.page-content{
+  flex:1;padding:28px;
+  overflow-y:auto;
+}
+
+/* ═══ VIEWS ═══ */
+.view{display:none;}
+.view.active{display:block;animation:fadeIn 0.35s ease-out;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ WELCOME BANNER ═══ */
+.welcome-banner{
+  background:linear-gradient(135deg,var(--purple3),var(--purple),var(--cyan));
+  border-radius:20px;padding:28px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;position:relative;overflow:hidden;
+}
+.welcome-banner::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.welcome-text h2{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.welcome-text p{font-size:14px;color:rgba(255,255,255,0.75);}
+.welcome-emoji{font-size:56px;position:relative;z-index:1;}
+
+/* ═══ STATS ROW ═══ */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;margin-bottom:24px;
+}
+.stat-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;padding:20px;
+  position:relative;overflow:hidden;
+  transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;
+}
+.stat-card:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 12px 30px var(--glow);}
+.stat-card::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:80px;height:80px;border-radius:50%;
+  background:var(--stat-glow,rgba(124,58,237,0.1));
+  pointer-events:none;
+}
+.stat-icon-box{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:12px;
+  background:var(--stat-bg,rgba(124,58,237,0.12));
+}
+.stat-val{font-size:26px;font-weight:800;color:var(--text);line-height:1;}
+.stat-label{font-size:12px;color:var(--text3);margin-top:4px;}
+.stat-change{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:11px;font-weight:600;margin-top:8px;
+  padding:2px 8px;border-radius:20px;
+}
+.stat-change.up{color:#10b981;background:rgba(16,185,129,0.1);}
+.stat-change.down{color:#ef4444;background:rgba(239,68,68,0.1);}
+
+/* ═══ GRID LAYOUT ═══ */
+.dash-grid{
+  display:grid;grid-template-columns:1.4fr 1fr;
+  gap:20px;margin-bottom:24px;
+}
+.dash-grid-3{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:20px;margin-bottom:24px;
+}
+
+/* ═══ CARD ═══ */
+.dash-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;padding:22px;
+}
+.dash-card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;
+}
+.dash-card-title{font-size:14px;font-weight:700;color:var(--text);}
+.dash-card-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.card-action{
+  font-size:12px;color:var(--purple2);cursor:pointer;font-weight:600;
+  background:none;border:none;font-family:inherit;
+  transition:opacity 0.2s;
+}
+.card-action:hover{opacity:0.8;}
+
+/* ═══ PROGRESS BARS ═══ */
+.subject-list{display:flex;flex-direction:column;gap:14px;}
+.subject-item{}
+.subject-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.subject-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
+.subject-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.subject-pct{font-size:12px;font-weight:700;}
+.subject-track{height:7px;background:var(--input-bg);border-radius:6px;overflow:hidden;}
+.subject-fill{height:100%;border-radius:6px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1);}
+
+/* ═══ SCHEDULE LIST ═══ */
+.schedule-list{display:flex;flex-direction:column;gap:10px;}
+.schedule-item{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 14px;border-radius:12px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  transition:border-color 0.2s;cursor:pointer;
+}
+.schedule-item:hover{border-color:var(--border2);}
+.schedule-time{
+  font-size:11px;font-weight:700;color:var(--text3);
+  min-width:45px;text-align:right;
+}
+.schedule-line{width:2px;height:36px;border-radius:2px;flex-shrink:0;}
+.schedule-info{}
+.schedule-title{font-size:13px;font-weight:600;color:var(--text);}
+.schedule-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.schedule-badge{
+  margin-left:auto;padding:3px 10px;border-radius:20px;
+  font-size:10px;font-weight:700;
+}
+.badge-doing{background:rgba(14,165,233,0.15);color:var(--cyan);}
+.badge-next{background:rgba(124,58,237,0.15);color:var(--purple2);}
+.badge-done{background:rgba(16,185,129,0.15);color:var(--green);}
+.badge-missed{background:rgba(239,68,68,0.15);color:var(--red);}
+
+/* ═══ AI INSIGHTS ═══ */
+.insight-card{
+  display:flex;gap:14px;padding:14px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(14,165,233,0.05));
+  border:1px solid rgba(124,58,237,0.2);
+  border-radius:14px;margin-bottom:10px;
+  transition:border-color 0.2s;
+}
+.insight-card:hover{border-color:rgba(124,58,237,0.4);}
+.insight-icon{font-size:22px;flex-shrink:0;}
+.insight-text{font-size:13px;color:var(--text2);line-height:1.6;}
+.insight-text strong{color:var(--purple2);}
+
+/* ═══ QUICK ACTIONS ═══ */
+.quick-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.quick-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:13px 14px;border-radius:12px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  cursor:pointer;transition:all 0.2s;text-decoration:none;
+}
+.quick-btn:hover{background:var(--bg3);border-color:var(--border2);transform:translateY(-2px);}
+.quick-btn-icon{font-size:20px;}
+.quick-btn-label{font-size:12px;font-weight:600;color:var(--text2);}
+
+/* ═══ MINI CALENDAR ═══ */
+.mini-cal{}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-month{font-size:13px;font-weight:700;color:var(--text);}
+.cal-nav{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:5px;transition:color 0.2s;}
+.cal-nav:hover{color:var(--text);}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:6px;}
+.cal-day-label{font-size:10px;color:var(--text3);font-weight:600;padding:4px 0;}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;border-radius:7px;cursor:pointer;
+  color:var(--text2);transition:all 0.15s;
+}
+.cal-day:hover{background:var(--input-bg);color:var(--text);}
+.cal-day.other{color:var(--text3);opacity:0.4;}
+.cal-day.has-study{position:relative;}
+.cal-day.has-study::after{
+  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--cyan);
+}
+.cal-day.today{
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-weight:700;
+}
+.cal-day.missed::after{background:var(--red);}
+
+/* ═══ COURSES PAGE ═══ */
+.courses-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+}
+.courses-title{font-size:22px;font-weight:800;color:var(--text);}
+.btn-add-course{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:12px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-size:13px;font-weight:700;
+  font-family:inherit;border:none;cursor:pointer;
+  transition:opacity 0.2s,transform 0.2s;
+  box-shadow:0 4px 16px rgba(124,58,237,0.35);
+}
+.btn-add-course:hover{opacity:0.9;transform:translateY(-2px);}
+
+.courses-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.course-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  transition:transform 0.25s,box-shadow 0.25s,border-color 0.25s;
+  cursor:pointer;
+}
+.course-card:hover{
+  transform:translateY(-5px);
+  border-color:var(--border2);
+  box-shadow:0 16px 40px var(--glow);
+}
+.course-card-top{
+  height:90px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+}
+.course-card-body{padding:18px;}
+.course-card-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.course-card-code{font-size:11px;color:var(--text3);margin-bottom:12px;}
+.course-progress-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.course-progress-label{font-size:11px;color:var(--text3);}
+.course-progress-pct{font-size:12px;font-weight:700;}
+.course-track{height:5px;background:var(--input-bg);border-radius:4px;overflow:hidden;margin-bottom:14px;}
+.course-fill{height:100%;border-radius:4px;transition:width 1.5s ease;}
+.course-meta{display:flex;align-items:center;gap:12px;}
+.course-meta-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);}
+.course-status{
+  margin-left:auto;padding:3px 10px;border-radius:20px;
+  font-size:10px;font-weight:700;
+}
+.status-active{background:rgba(16,185,129,0.15);color:var(--green);}
+.status-behind{background:rgba(239,68,68,0.15);color:var(--red);}
+.status-ontrack{background:rgba(14,165,233,0.15);color:var(--cyan);}
+
+/* empty state */
+.empty-state{
+  text-align:center;padding:60px 20px;
+  grid-column:1/-1;
+}
+.empty-icon{font-size:48px;margin-bottom:16px;}
+.empty-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.empty-sub{font-size:14px;color:var(--text3);margin-bottom:24px;}
+.btn-empty{
+  padding:12px 28px;border-radius:12px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-size:14px;font-weight:700;
+  font-family:inherit;border:none;cursor:pointer;
+  transition:opacity 0.2s;
+}
+.btn-empty:hover{opacity:0.85;}
+
+/* ═══ ADD COURSE MODAL ═══ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:24px;padding:32px;
+  width:100%;max-width:500px;
+  animation:modalIn 0.3s ease-out;
+  position:relative;max-height:90vh;overflow-y:auto;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(0.94) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-close{
+  position:absolute;top:16px;right:16px;
+  width:32px;height:32px;border-radius:50%;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  color:var(--text2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.2s;
+}
+.modal-close:hover{background:var(--bg3);}
+.modal-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+
+.form-group{margin-bottom:16px;}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;}
+.form-input{
+  width:100%;background:var(--input-bg);border:1px solid var(--input-bdr);
+  border-radius:10px;padding:10px 14px;color:var(--text);
+  font-size:13px;font-family:inherit;outline:none;
+  transition:border-color 0.2s;
+}
+.form-input:focus{border-color:var(--purple);}
+.form-input::placeholder{color:var(--text3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-select{
+  width:100%;background:var(--input-bg);border:1px solid var(--input-bdr);
+  border-radius:10px;padding:10px 14px;color:var(--text);
+  font-size:13px;font-family:inherit;outline:none;
+  transition:border-color 0.2s;appearance:none;
+}
+.form-select:focus{border-color:var(--purple);}
+.color-picker-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.color-swatch{
+  width:28px;height:28px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:transform 0.15s,border-color 0.15s;
+}
+.color-swatch.selected{border-color:#fff;transform:scale(1.2);}
+.emoji-picker-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.emoji-opt{
+  width:36px;height:36px;border-radius:9px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;transition:all 0.15s;
+}
+.emoji-opt.selected{border-color:var(--purple);background:rgba(124,58,237,0.15);}
+.btn-submit{
+  width:100%;padding:13px;border-radius:12px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-size:14px;font-weight:700;
+  font-family:inherit;border:none;cursor:pointer;
+  transition:opacity 0.2s,transform 0.15s;margin-top:6px;
+}
+.btn-submit:hover{opacity:0.9;transform:translateY(-1px);}
+
+/* ═══ AI PARSER PAGE ═══ */
+.parser-layout{
+  display:grid;grid-template-columns:1fr 1.1fr;
+  gap:24px;align-items:start;
+}
+.upload-zone{
+  border:2px dashed var(--border2);
+  border-radius:18px;padding:48px 24px;
+  text-align:center;
+  background:linear-gradient(135deg,rgba(124,58,237,0.05),rgba(14,165,233,0.03));
+  transition:all 0.2s;cursor:pointer;
+  position:relative;
+}
+.upload-zone:hover,.upload-zone.drag{
+  border-color:var(--purple2);
+  background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(14,165,233,0.06));
+}
+.upload-zone input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;
+}
+.upload-icon{font-size:48px;margin-bottom:16px;}
+.upload-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.upload-sub{font-size:13px;color:var(--text3);}
+.upload-types{
+  display:flex;gap:6px;justify-content:center;margin-top:14px;
+}
+.type-tag{
+  padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  color:var(--text3);
+}
+.upload-preview{
+  display:none;padding:16px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  border-radius:12px;margin-top:14px;
+  display:none;align-items:center;gap:12px;
+}
+.upload-preview.show{display:flex;}
+.file-icon{font-size:26px;}
+.file-info{flex:1;}
+.file-name{font-size:13px;font-weight:600;color:var(--text);}
+.file-size{font-size:11px;color:var(--text3);margin-top:2px;}
+.file-remove{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;transition:color 0.2s;}
+.file-remove:hover{color:var(--red);}
+
+.parse-btn{
+  width:100%;padding:14px;border-radius:12px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-size:14px;font-weight:700;
+  font-family:inherit;border:none;cursor:pointer;
+  transition:all 0.2s;margin-top:14px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.parse-btn:hover{opacity:0.9;transform:translateY(-1px);}
+.parse-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+.parser-result{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:22px;
+  min-height:400px;
+}
+.result-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+.result-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(14,165,233,0.15));
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.result-title{font-size:15px;font-weight:700;color:var(--text);}
+.result-sub{font-size:12px;color:var(--text3);}
+.result-placeholder{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:300px;text-align:center;
+}
+.result-placeholder-icon{font-size:40px;margin-bottom:14px;opacity:0.4;}
+.result-placeholder-text{font-size:13px;color:var(--text3);}
+
+.result-content{display:none;}
+.result-content.show{display:block;animation:fadeIn 0.4s ease-out;}
+
+.parsed-course-name{
+  font-size:18px;font-weight:800;color:var(--text);
+  margin-bottom:4px;
+}
+.parsed-course-info{
+  display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;
+}
+.info-chip{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 11px;border-radius:20px;
+  font-size:11px;color:var(--text2);
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+}
+
+.topics-list{margin-bottom:18px;}
+.topics-title{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;}
+.topic-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  margin-bottom:7px;
+  animation:slideIn 0.3s ease-out forwards;
+  opacity:0;
+}
+@keyframes slideIn{to{opacity:1;transform:translateX(0)}from{opacity:0;transform:translateX(-12px)}}
+.topic-num{
+  width:24px;height:24px;border-radius:7px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.topic-name{font-size:13px;color:var(--text);}
+.topic-weeks{font-size:11px;color:var(--text3);margin-left:auto;}
+
+.deadlines-list{margin-bottom:18px;}
+.deadline-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  background:var(--input-bg);border:1px solid var(--input-bdr);
+  margin-bottom:7px;
+}
+.deadline-icon{font-size:16px;}
+.deadline-name{font-size:13px;color:var(--text);flex:1;}
+.deadline-date{font-size:11px;color:var(--amber);font-weight:600;}
+.deadline-type{
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
+}
+.dtype-exam{background:rgba(239,68,68,0.15);color:var(--red);}
+.dtype-assign{background:rgba(245,158,11,0.15);color:var(--amber);}
+.dtype-quiz{background:rgba(14,165,233,0.15);color:var(--cyan);}
+
+.result-actions{display:flex;gap:10px;}
+.btn-result{
+  flex:1;padding:11px;border-radius:11px;
+  font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-result-primary{
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;border:none;
+}
+.btn-result-primary:hover{opacity:0.9;}
+.btn-result-outline{
+  background:none;
+  border:1px solid var(--border2);color:var(--text2);
+}
+.btn-result-outline:hover{background:var(--input-bg);}
+
+/* Loading state */
+.parsing-loader{
+  display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  height:300px;text-align:center;
+  gap:16px;
+}
+.parsing-loader.show{display:flex;}
+.loader-ring{
+  width:52px;height:52px;border-radius:50%;
+  border:3px solid var(--input-bdr);
+  border-top-color:var(--purple);
+  border-right-color:var(--cyan);
+  animation:spin 0.9s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{font-size:14px;font-weight:600;color:var(--text2);}
+.loader-sub{font-size:12px;color:var(--text3);}
+
+/* ═══ ANALYTICS PAGE ═══ */
+.analytics-grid{
+  display:grid;grid-template-columns:2fr 1fr;
+  gap:20px;margin-bottom:20px;
+}
+.heatmap-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+.heatmap-cell{
+  aspect-ratio:1;border-radius:4px;
+  background:var(--input-bg);
+  transition:background 0.2s;cursor:pointer;
+}
+.heatmap-cell.l1{background:rgba(124,58,237,0.25);}
+.heatmap-cell.l2{background:rgba(124,58,237,0.45);}
+.heatmap-cell.l3{background:rgba(124,58,237,0.65);}
+.heatmap-cell.l4{background:linear-gradient(135deg,var(--purple),var(--cyan));}
+.heatmap-cell:hover{transform:scale(1.2);}
+
+/* ═══ TOAST ═══ */
+.sw-toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  padding:12px 20px;border-radius:12px;color:#fff;
+  font-size:13px;font-weight:500;
+  opacity:0;transform:translateY(10px);
+  transition:opacity 0.3s,transform 0.3s;
+  pointer-events:none;
+}
+.sw-toast.show{opacity:1;transform:translateY(0);}
+.sw-toast.success{background:#065f46;border:1px solid #10b981;}
+.sw-toast.error{background:#7f1d1d;border:1px solid #ef4444;}
+.sw-toast.info{background:#1e1b4b;border:1px solid var(--purple);}
+
+/* ═══ MOBILE ═══ */
+.hamburger{display:none;background:none;border:none;font-size:22px;color:var(--text);cursor:pointer;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+.sidebar-overlay.show{display:block;}
+
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .hamburger{display:flex;}
+  .sidebar-overlay.show{display:block;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .dash-grid,.dash-grid-3{grid-template-columns:1fr;}
+  .courses-grid{grid-template-columns:1fr 1fr;}
+  .parser-layout{grid-template-columns:1fr;}
+  .analytics-grid{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+  .courses-grid{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .page-content{padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR OVERLAY ═══ -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">📚</div>
+    <span class="sidebar-logo-name">StudyWise</span>
+    <span class="sidebar-logo-ver">Beta</span>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="sidebar-avatar" id="sidebarAvatar">S</div>
+    <div>
+      <div class="sidebar-username" id="sidebarName">Student</div>
+      <div class="sidebar-status"><div class="status-dot"></div>Active now</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <div class="nav-item active" onclick="showView('overview')">
+      <span class="nav-icon">🏠</span> Overview
+    </div>
+    <div class="nav-item" onclick="showView('courses')">
+      <span class="nav-icon">📖</span> My Courses
+      <span class="nav-badge green" id="coursesBadge">0</span>
+    </div>
+    <div class="nav-item" onclick="showView('schedule')">
+      <span class="nav-icon">📅</span> Schedule
+      <span class="nav-badge amber">Today</span>
+    </div>
+    <div class="nav-item" onclick="showView('analytics')">
+      <span class="nav-icon">📊</span> Analytics
+    </div>
+
+    <div class="nav-section-label">AI Tools</div>
+    <div class="nav-item" onclick="showView('parser')">
+      <span class="nav-icon">🤖</span> AI Syllabus Parser
+      <span class="nav-badge">New</span>
+    </div>
+    <div class="nav-item" onclick="showView('tutor')">
+      <span class="nav-icon">💬</span> AI Tutor
+    </div>
+
+    <div class="nav-section-label">Progress</div>
+    <div class="nav-item" onclick="showView('goals')">
+      <span class="nav-icon">🎯</span> Goals
+    </div>
+    <div class="nav-item" onclick="showView('achievements')">
+      <span class="nav-icon">🏆</span> Achievements
+    </div>
+  </nav>
+
+  <!-- Streak Widget -->
+  <div class="sidebar-streak">
+    <div class="streak-top">
+      <span class="streak-fire">🔥</span>
+      <div>
+        <div class="streak-num">14</div>
+        <div class="streak-label">Day Streak</div>
+      </div>
+    </div>
+    <div class="streak-days" id="streakDays"></div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="sidebar-bottom-item" onclick="toggleTheme()">
+      <span>🌙</span> Toggle Theme
+    </div>
+    <div class="sidebar-bottom-item" onclick="goHome()">
+      <span>🏠</span> Back to Home
+    </div>
+    <div class="sidebar-bottom-item" onclick="logout()">
+      <span>🚪</span> Sign Out
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openSidebar()">☰</button>
+      <div>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+        <div class="breadcrumb">
+          <span>StudyWise</span>
+          <span class="sep">›</span>
+          <span id="topbarBread">Overview</span>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input placeholder="Search courses, tasks…">
+      </div>
+      <div class="topbar-btn">
+        🔔<div class="notif-dot"></div>
+      </div>
+      <div class="theme-btn" onclick="toggleTheme()">🌙</div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-content">
+
+    <!-- ════ VIEW: OVERVIEW ════ -->
+    <div class="view active" id="view-overview">
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h2>Good morning, <span id="welcomeName">Student</span>! ☀️</h2>
+          <p>You have <strong>3 study sessions</strong> scheduled today. Stay consistent and keep the streak alive!</p>
+        </div>
+        <div class="welcome-emoji">🎓</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card" style="--stat-bg:rgba(124,58,237,0.12);--stat-glow:rgba(124,58,237,0.12);">
+          <div class="stat-icon-box">📚</div>
+          <div class="stat-val" id="statCourses">0</div>
+          <div class="stat-label">Active Courses</div>
+          <div class="stat-change up">↑ Ready to study</div>
+        </div>
+        <div class="stat-card" style="--stat-bg:rgba(14,165,233,0.12);--stat-glow:rgba(14,165,233,0.12);">
+          <div class="stat-icon-box">⏱️</div>
+          <div class="stat-val">47.5h</div>
+          <div class="stat-label">Hours This Month</div>
+          <div class="stat-change up">↑ 12% vs last month</div>
+        </div>
+        <div class="stat-card" style="--stat-bg:rgba(245,158,11,0.12);--stat-glow:rgba(245,158,11,0.12);">
+          <div class="stat-icon-box">🔥</div>
+          <div class="stat-val">14</div>
+          <div class="stat-label">Day Streak</div>
+          <div class="stat-change up">↑ Personal best!</div>
+        </div>
+        <div class="stat-card" style="--stat-bg:rgba(16,185,129,0.12);--stat-glow:rgba(16,185,129,0.12);">
+          <div class="stat-icon-box">🏆</div>
+          <div class="stat-val">#23</div>
+          <div class="stat-label">Global Rank</div>
+          <div class="stat-change up">↑ Top 3% this week</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- Subject Progress -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div>
+              <div class="dash-card-title">Subject Progress</div>
+              <div class="dash-card-sub">This semester overview</div>
+            </div>
+            <button class="card-action" onclick="showView('courses')">View All →</button>
+          </div>
+          <div class="subject-list" id="subjectList">
+            <!-- Populated by JS -->
+            <div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">
+              Add courses to see your progress here 📚
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Schedule -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div>
+              <div class="dash-card-title">Today's Schedule</div>
+              <div class="dash-card-sub" id="todayDate">Monday, June 29</div>
+            </div>
+            <button class="card-action">Full View →</button>
+          </div>
+          <div class="schedule-list">
+            <div class="schedule-item">
+              <div class="schedule-time">9:00</div>
+              <div class="schedule-line" style="background:linear-gradient(180deg,var(--purple),var(--cyan))"></div>
+              <div class="schedule-info">
+                <div class="schedule-title">Mathematics — Calculus</div>
+                <div class="schedule-meta">Chapter 5 · 90 min session</div>
+              </div>
+              <span class="schedule-badge badge-done">Done</span>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">13:00</div>
+              <div class="schedule-line" style="background:linear-gradient(180deg,var(--cyan),var(--cyan2))"></div>
+              <div class="schedule-info">
+                <div class="schedule-title">Physics — Waves</div>
+                <div class="schedule-meta">Chapter 8 · 60 min session</div>
+              </div>
+              <span class="schedule-badge badge-doing">Now</span>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-time">17:00</div>
+              <div class="schedule-line" style="background:linear-gradient(180deg,var(--pink),var(--purple2))"></div>
+              <div class="schedule-info">
+                <div class="schedule-title">English — Essay Review</div>
+                <div class="schedule-meta">Draft 2 · 45 min session</div>
+              </div>
+              <span class="schedule-badge badge-next">Next</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid-3">
+        <!-- AI Insights -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title">🤖 AI Insights</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">📈</span>
+            <div class="insight-text"><strong>Physics needs attention</strong> — you're 15% below your target pace. Add 2 extra sessions this week.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">🌟</span>
+            <div class="insight-text"><strong>English is your strength</strong> — 91% progress. Consider helping peers in the study group.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">⚡</span>
+            <div class="insight-text"><strong>Peak hours detected</strong> — you study best between 9 AM–12 PM. Schedule hard topics then.</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title">⚡ Quick Actions</div>
+          </div>
+          <div class="quick-grid">
+            <div class="quick-btn" onclick="showView('parser')">
+              <span class="quick-btn-icon">📄</span>
+              <span class="quick-btn-label">Parse Syllabus</span>
+            </div>
+            <div class="quick-btn" onclick="showView('courses')">
+              <span class="quick-btn-icon">➕</span>
+              <span class="quick-btn-label">Add Course</span>
+            </div>
+            <div class="quick-btn" onclick="showView('tutor')">
+              <span class="quick-btn-icon">💬</span>
+              <span class="quick-btn-label">Ask AI Tutor</span>
+            </div>
+            <div class="quick-btn" onclick="showView('analytics')">
+              <span class="quick-btn-icon">📊</span>
+              <span class="quick-btn-label">View Progress</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini Calendar -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title">📅 Calendar</div>
+          </div>
+          <div class="mini-cal" id="miniCal"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ VIEW: COURSES ════ -->
+    <div class="view" id="view-courses">
+      <div class="courses-header">
+        <div>
+          <div class="courses-title">My Courses</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:4px;" id="coursesCount">No courses yet — add your first one!</div>
+        </div>
+        <button class="btn-add-course" onclick="openAddCourse()">
+          ➕ Add Course
+        </button>
+      </div>
+
+      <div class="courses-grid" id="coursesGrid">
+        <!-- Empty state -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📚</div>
+          <div class="empty-title">No courses yet</div>
+          <div class="empty-sub">Add your first course and start building your study schedule with AI.</div>
+          <button class="btn-empty" onclick="openAddCourse()">➕ Add Your First Course</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ VIEW: AI PARSER ════ -->
+    <div class="view" id="view-parser">
+      <div style="margin-bottom:24px;">
+        <div style="font-size:11px;color:var(--purple2);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">✦ AI Tool</div>
+        <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px;">AI Syllabus Parser</div>
+        <div style="font-size:14px;color:var(--text3);">Upload your syllabus PDF or image — our AI will extract all topics, deadlines, and build your study plan automatically.</div>
+      </div>
+
+      <div class="parser-layout">
+        <div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" onchange="handleFileSelect(event)">
+            <div class="upload-icon">📄</div>
+            <div class="upload-title">Drop your syllabus here</div>
+            <div class="upload-sub">or click to browse your files</div>
+            <div class="upload-types">
+              <span class="type-tag">PDF</span>
+              <span class="type-tag">PNG</span>
+              <span class="type-tag">JPG</span>
+              <span class="type-tag">DOCX</span>
+            </div>
+          </div>
+
+          <div class="upload-preview" id="uploadPreview">
+            <span class="file-icon" id="previewIcon">📄</span>
+            <div class="file-info">
+              <div class="file-name" id="previewName">syllabus.pdf</div>
+              <div class="file-size" id="previewSize">2.4 MB</div>
+            </div>
+            <button class="file-remove" onclick="removeFile()">✕</button>
+          </div>
+
+          <button class="parse-btn" id="parseBtn" onclick="parseSyllabus()" disabled>
+            🤖 Parse with AI
+          </button>
+
+          <div style="margin-top:18px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;">How it works</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">1</div>
+                <div style="font-size:13px;color:var(--text2);padding-top:5px;">Upload your course syllabus (PDF, image, or Word doc)</div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">2</div>
+                <div style="font-size:13px;color:var(--text2);padding-top:5px;">AI extracts topics, deadlines, exams, and assignments</div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">3</div>
+                <div style="font-size:13px;color:var(--text2);padding-top:5px;">Review the results and add the course to your schedule with one click</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="parser-result">
+          <div class="result-header">
+            <div class="result-icon">✨</div>
+            <div>
+              <div class="result-title">Parsed Results</div>
+              <div class="result-sub">AI-extracted course information</div>
+            </div>
+          </div>
+
+          <div class="result-placeholder" id="resultPlaceholder">
+            <div class="result-placeholder-icon">🤖</div>
+            <div class="result-placeholder-text">Upload a syllabus to see<br>extracted information here</div>
+          </div>
+
+          <div class="parsing-loader" id="parsingLoader">
+            <div class="loader-ring"></div>
+            <div class="loader-text">Analyzing your syllabus…</div>
+            <div class="loader-sub">Extracting topics, deadlines & key dates</div>
+          </div>
+
+          <div class="result-content" id="resultContent">
+            <div class="parsed-course-name" id="parsedCourseName">Advanced Mathematics</div>
+            <div class="parsed-course-info" id="parsedCourseInfo">
+              <span class="info-chip">📅 16 Weeks</span>
+              <span class="info-chip">📝 6 Topics</span>
+              <span class="info-chip">⚠️ 4 Deadlines</span>
+              <span class="info-chip">🎓 3 Credit Hours</span>
+            </div>
+
+            <div class="topics-list">
+              <div class="topics-title">📚 Course Topics</div>
+              <div id="parsedTopics"></div>
+            </div>
+
+            <div class="deadlines-list">
+              <div class="topics-title">⏰ Deadlines & Exams</div>
+              <div id="parsedDeadlines"></div>
+            </div>
+
+            <div class="result-actions">
+              <button class="btn-result btn-result-primary" onclick="addParsedCourse()">
+                ✅ Add to My Courses
+              </button>
+              <button class="btn-result btn-result-outline" onclick="resetParser()">
+                🔄 Parse Another
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ VIEW: ANALYTICS ════ -->
+    <div class="view" id="view-analytics">
+      <div style="margin-bottom:24px;">
+        <div style="font-size:11px;color:var(--purple2);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">✦ Insights</div>
+        <div style="font-size:22px;font-weight:800;color:var(--text);">Progress Analytics</div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title">Study Hours — Last 4 Weeks</div>
+          </div>
+          <canvas id="hoursChart" height="200"></canvas>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <div class="dash-card-title">Subject Distribution</div>
+          </div>
+          <canvas id="pieChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="dash-card" style="margin-bottom:20px;">
+        <div class="dash-card-header">
+          <div class="dash-card-title">Study Heatmap — This Month</div>
+          <button class="card-action">Export →</button>
+        </div>
+        <div class="heatmap-grid" id="heatmapGrid"></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:12px;">
+          <span style="font-size:11px;color:var(--text3);">Less</span>
+          <div style="width:14px;height:14px;border-radius:3px;background:var(--input-bg);"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(124,58,237,0.25);"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(124,58,237,0.45);"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(124,58,237,0.65);"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:linear-gradient(135deg,var(--purple),var(--cyan));"></div>
+          <span style="font-size:11px;color:var(--text3);">More</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ VIEW: SCHEDULE ════ -->
+    <div class="view" id="view-schedule">
+      <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:24px;">📅 Weekly Schedule</div>
+      <div class="dash-card">
+        <div style="text-align:center;padding:40px;color:var(--text3);">
+          <div style="font-size:36px;margin-bottom:12px;">🚧</div>
+          <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;">Schedule Builder</div>
+          <div style="font-size:13px;">Connect your .NET backend to generate AI-powered schedules based on your courses and deadlines.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ VIEW: AI TUTOR ════ -->
+    <div class="view" id="view-tutor">
+      <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:24px;">💬 AI Tutor</div>
+      <div class="dash-card" style="max-width:700px;">
+        <div style="display:flex;flex-direction:column;height:500px;">
+          <div style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px;" id="tutorMessages">
+            <div style="background:var(--input-bg);border:1px solid var(--input-bdr);border-radius:14px;padding:12px 16px;font-size:13px;color:var(--text);max-width:80%;border-bottom-left-radius:4px;">
+              👋 Hi! I'm your AI Study Tutor. Ask me to explain any concept, generate practice questions, or summarize a topic!
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding:14px;display:flex;gap:10px;">
+            <input class="form-input" id="tutorInput" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')sendTutorMsg()" style="flex:1;">
+            <button onclick="sendTutorMsg()" style="padding:10px 18px;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ VIEW: GOALS ════ -->
+    <div class="view" id="view-goals">
+      <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:24px;">🎯 Goals</div>
+      <div class="dash-card"><div style="text-align:center;padding:40px;color:var(--text3);font-size:13px;">Goals feature — connect to backend to set exam targets and GPA goals.</div></div>
+    </div>
+
+    <!-- ════ VIEW: ACHIEVEMENTS ════ -->
+    <div class="view" id="view-achievements">
+      <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:24px;">🏆 Achievements</div>
+      <div class="dash-grid-3">
+        <div class="dash-card" style="text-align:center;">
+          <div style="font-size:42px;margin-bottom:10px;">🔥</div>
+          <div style="font-weight:700;color:var(--text);">14-Day Streak</div>
+          <div style="font-size:12px;color:var(--green);margin-top:4px;">Unlocked!</div>
+        </div>
+        <div class="dash-card" style="text-align:center;">
+          <div style="font-size:42px;margin-bottom:10px;opacity:0.3;">🎯</div>
+          <div style="font-weight:700;color:var(--text2);">Goal Crusher</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">Complete 5 goals</div>
+        </div>
+        <div class="dash-card" style="text-align:center;">
+          <div style="font-size:42px;margin-bottom:10px;opacity:0.3;">📚</div>
+          <div style="font-weight:700;color:var(--text2);">Course Master</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;">Add 5 courses</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end page-content -->
+</div><!-- end main -->
+
+<!-- ═══ ADD COURSE MODAL ═══ -->
+<div class="modal-overlay" id="addCourseModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAddCourse()">✕</button>
+    <div class="modal-title">Add New Course</div>
+    <div class="modal-sub">Set up your course to generate a smart study plan</div>
+
+    <div class="form-group">
+      <label class="form-label">Course Name *</label>
+      <input class="form-input" id="cName" placeholder="e.g. Advanced Mathematics">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Course Code</label>
+        <input class="form-input" id="cCode" placeholder="e.g. MATH301">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Credit Hours</label>
+        <input class="form-input" id="cCredits" type="number" placeholder="3" min="1" max="6">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Start Date</label>
+        <input class="form-input" id="cStart" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Exam Date</label>
+        <input class="form-input" id="cExam" type="date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Difficulty</label>
+      <select class="form-select" id="cDiff">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Course Icon</label>
+      <div class="emoji-picker-row" id="emojiPicker">
+        <div class="emoji-opt selected" data-emoji="📐" onclick="selectEmoji(this)">📐</div>
+        <div class="emoji-opt" data-emoji="🔬" onclick="selectEmoji(this)">🔬</div>
+        <div class="emoji-opt" data-emoji="💻" onclick="selectEmoji(this)">💻</div>
+        <div class="emoji-opt" data-emoji="📖" onclick="selectEmoji(this)">📖</div>
+        <div class="emoji-opt" data-emoji="🧮" onclick="selectEmoji(this)">🧮</div>
+        <div class="emoji-opt" data-emoji="🌍" onclick="selectEmoji(this)">🌍</div>
+        <div class="emoji-opt" data-emoji="⚗️" onclick="selectEmoji(this)">⚗️</div>
+        <div class="emoji-opt" data-emoji="🎨" onclick="selectEmoji(this)">🎨</div>
+        <div class="emoji-opt" data-emoji="🏛️" onclick="selectEmoji(this)">🏛️</div>
+        <div class="emoji-opt" data-emoji="💊" onclick="selectEmoji(this)">💊</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Color Theme</label>
+      <div class="color-picker-row" id="colorPicker">
+        <div class="color-swatch selected" data-color="#7c3aed" style="background:#7c3aed" onclick="selectColor(this)"></div>
+        <div class="color-swatch" data-color="#0ea5e9" style="background:#0ea5e9" onclick="selectColor(this)"></div>
+        <div class="color-swatch" data-color="#ec4899" style="background:#ec4899" onclick="selectColor(this)"></div>
+        <div class="color-swatch" data-color="#10b981" style="background:#10b981" onclick="selectColor(this)"></div>
+        <div class="color-swatch" data-color="#f59e0b" style="background:#f59e0b" onclick="selectColor(this)"></div>
+        <div class="color-swatch" data-color="#ef4444" style="background:#ef4444" onclick="selectColor(this)"></div>
+        <div class="color-swatch" data-color="#8b5cf6" style="background:#8b5cf6" onclick="selectColor(this)"></div>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="saveCourse()">✅ Add Course to Schedule</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="sw-toast" id="swToast"></div>
+
+<script>
+
+// Protect dashboard
+if (!localStorage.getItem('sw_user')) {
+  window.location.href = 'index.html';
+}
+// ═══════════ STATE ═══════════
+let courses = [];
+let selectedEmoji = '📐';
+let selectedColor = '#7c3aed';
+let selectedFile = null;
+const CLAUDE_API = 'https://api.anthropic.com/v1/messages';
+
+// ═══════════ INIT ═══════════
+(function init(){
+  // Restore user
+  try{
+    let u = JSON.parse(localStorage.getItem('sw_user') || 'null');
+    if(!u){ u = {name:'Student', email:'student@studywise.io'}; }
+    document.getElementById('sidebarAvatar').textContent = u.name.charAt(0).toUpperCase();
+    document.getElementById('sidebarName').textContent = u.name.split(' ')[0];
+    document.getElementById('welcomeName').textContent = u.name.split(' ')[0];
+  }catch(e){}
+
+  // Restore courses
+  try{
+    courses = JSON.parse(localStorage.getItem('sw_courses') || '[]');
+  }catch(e){ courses=[]; }
+
+  // Build UI
+  buildStreakDays();
+  buildMiniCalendar();
+  updateCoursesUI();
+  setTodayDate();
+
+  // Load theme
+  try{
+    const t = localStorage.getItem('sw_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+
+function setTodayDate(){
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const el = document.getElementById('todayDate');
+  if(el) el.textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+}
+// ═══════════ COURSES ═══════════
+function updateCoursesUI(){
+  const grid = document.getElementById('coursesGrid');
+  const empty = document.getElementById('emptyState');
+  const subjectList = document.getElementById('subjectList');
+  const badge = document.getElementById('coursesBadge');
+  const countEl = document.getElementById('coursesCount');
+  const statEl = document.getElementById('statCourses');
+  
+  if(badge) badge.textContent = courses.length;
+  if(statEl) statEl.textContent = courses.length;
+  if(countEl) countEl.textContent = courses.length ? `${courses.length} course${courses.length>1?'s':''} · ${courses.filter(c=>c.progress>80).length} on track` : 'No courses yet — add your first one!';
+
+  if(!courses.length){
+    if(empty) empty.style.display='block';
+    if(subjectList) subjectList.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">Add courses to see your progress here 📚</div>';
+    return;
+  }
+  if(empty) empty.style.display='none';
+
+  const cardsHTML = courses.map((c,i)=>`
+    <div class="course-card" onclick="openCourseDetail(${i})">
+      <div class="course-card-top" style="background:linear-gradient(135deg,${c.color}22,${c.color}11);">
+        <span style="font-size:40px;">${c.emoji}</span>
+        <div style="position:absolute;top:10px;right:10px;">
+          <span class="course-status ${getStatusClass(c.progress)}">
+            ${getStatusLabel(c.progress)}
+          </span>
+        </div>
+      </div>
+      <div class="course-card-body">
+        <div class="course-card-name">${c.name}</div>
+        <div class="course-card-code">${c.code||'No code'} · ${c.credits||3} Credits · ${c.diff||'Medium'}</div>
+        <div class="course-progress-row">
+          <span class="course-progress-label">Progress</span>
+          <span class="course-progress-pct" style="color:${c.color}">${c.progress}%</span>
+        </div>
+        <div class="course-track">
+          <div class="course-fill" style="width:${c.progress}%;background:linear-gradient(90deg,${c.color},${c.color}aa);"></div>
+        </div>
+        <div class="course-meta">
+          <div class="course-meta-item">📅 <span>${c.examDate||'No exam set'}</span></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  if(grid){
+    [...grid.children].forEach(c=>{ if(!c.id) c.remove(); });
+    grid.insertAdjacentHTML('beforeend',cardsHTML);
+  }
+
+  if(subjectList){
+    subjectList.innerHTML = courses.map(c=>`
+      <div class="subject-item">
+        <div class="subject-row">
+          <span class="subject-name"><span class="subject-dot" style="background:${c.color}"></span>${c.name}</span>
+          <span class="subject-pct" style="color:${c.color}">${c.progress}%</span>
+        </div>
+        <div class="subject-track">
+          <div class="subject-fill" style="width:${c.progress}%;background:linear-gradient(90deg,${c.color},${c.color}99);"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function getStatusClass(pct){ return pct>=75?'status-active':pct>=50?'status-ontrack':'status-behind'; }
+function getStatusLabel(pct){ return pct>=75?'On Track':pct>=50?'In Progress':'Needs Focus'; }
+
+// Open Add Course Modal
+function openAddCourse(){
+  currentEditIndex = null;
+  document.getElementById('modalTitle').textContent = 'Add New Course'; // لو عندك عنوان
+  document.getElementById('addCourseModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeAddCourse(){
+  document.getElementById('addCourseModal').classList.remove('open');
+  document.body.style.overflow='';
+  currentEditIndex = null;
+}
+
+// Save Course (New or Edit)
+function saveCourse(){
+  const name = document.getElementById('cName').value.trim();
+  if(!name){ showToast('Please enter a course name','error'); return; }
+
+  const course = {
+    name, 
+    emoji: selectedEmoji, 
+    color: selectedColor,
+    code: document.getElementById('cCode').value.trim(),
+    credits: document.getElementById('cCredits').value||3,
+    startDate: document.getElementById('cStart').value,
+    examDate: document.getElementById('cExam').value,
+    diff: document.getElementById('cDiff').value,
+    progress: Math.floor(Math.random()*60)+10,
+    addedAt: new Date().toISOString()
+  };
+
+  if (currentEditIndex !== null) {
+    courses[currentEditIndex] = {...courses[currentEditIndex], ...course};
+    showToast('Course updated successfully!', 'success');
+  } else {
+    courses.push(course);
+    showToast(`"${name}" added successfully! 🎉`,'success');
+  }
+
+  localStorage.setItem('sw_courses', JSON.stringify(courses));
+  closeAddCourse();
+  updateCoursesUI();
+}
+
+// Edit Course
+function editCourse(i){
+  const c = courses[i];
+  currentEditIndex = i;
+  
+  document.getElementById('cName').value = c.name || '';
+  document.getElementById('cCode').value = c.code || '';
+  document.getElementById('cExam').value = c.examDate || '';
+  document.getElementById('cCredits').value = c.credits || 3;
+  
+  document.getElementById('addCourseModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+// Delete Course
+function deleteCourse(i){
+  if(confirm(`Delete "${courses[i].name}"?`)){
+    courses.splice(i, 1);
+    localStorage.setItem('sw_courses', JSON.stringify(courses));
+    updateCoursesUI();
+    showToast('Course deleted successfully', 'success');
+  }
+}
+
+function openCourseDetail(i){
+  showToast(`Opening ${courses[i].name}…`, 'info');
+}
+
+// ═══════════ SIDEBAR ═══════════
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// ═══════════ VIEWS ═══════════
+const viewTitles = {
+  overview:'Dashboard', courses:'My Courses', parser:'AI Syllabus Parser',
+  analytics:'Analytics', schedule:'Schedule', tutor:'AI Tutor',
+  goals:'Goals', achievements:'Achievements'
+};
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const v = document.getElementById('view-'+name);
+  if(v) v.classList.add('active');
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(n=>{ if(n.textContent.trim().toLowerCase().includes(name.replace('-',' '))) n.classList.add('active'); });
+  document.getElementById('topbarTitle').textContent = viewTitles[name] || name;
+  document.getElementById('topbarBread').textContent = viewTitles[name] || name;
+  closeSidebar();
+  if(name==='analytics') setTimeout(buildCharts,100);
+}
+
+// ═══════════ STREAK ═══════════
+function buildStreakDays(){
+  const container = document.getElementById('streakDays');
+  if(!container)return;
+  const days=['M','T','W','T','F','S','S'];
+  let html='';
+  days.forEach((_,i)=>{
+    const cls = i<5?'done':i===5?'today':'';
+    html+=`<div class="streak-day ${cls}" title="${days[i]}"></div>`;
+  });
+  container.innerHTML=html;
+}
+
+// ═══════════ MINI CALENDAR ═══════════
+function buildMiniCalendar(){
+  const container = document.getElementById('miniCal');
+  if(!container)return;
+  const now = new Date();
+  const month = now.getMonth();
+  const year = now.getFullYear();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const firstDay = new Date(year,month,1).getDay();
+  const daysInMonth = new Date(year,month+1,0).getDate();
+  const dayNames=['S','M','T','W','T','F','S'];
+  let html=`<div class="cal-header">
+    <button class="cal-nav">‹</button>
+    <div class="cal-month">${months[month]} ${year}</div>
+    <button class="cal-nav">›</button>
+  </div>
+  <div class="cal-days-header">${dayNames.map(d=>`<div class="cal-day-label">${d}</div>`).join('')}</div>
+  <div class="cal-days">`;
+  const studyDays=[2,5,8,10,12,15,17,19,22,24,26,29];
+  for(let i=0;i<firstDay;i++) html+=`<div class="cal-day other"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const isToday=d===now.getDate();
+    const hasStudy=studyDays.includes(d)&&!isToday;
+    html+=`<div class="cal-day ${isToday?'today':''} ${hasStudy?'has-study':''}">${d}</div>`;
+  }
+  html+='</div>';
+  container.innerHTML=html;
+}
+
+// ═══════════ COURSES ═══════════
+function updateCoursesUI(){
+  const grid = document.getElementById('coursesGrid');
+  const empty = document.getElementById('emptyState');
+  const subjectList = document.getElementById('subjectList');
+  const badge = document.getElementById('coursesBadge');
+  const countEl = document.getElementById('coursesCount');
+  const statEl = document.getElementById('statCourses');
+  
+  if(badge) badge.textContent = courses.length;
+  if(statEl) statEl.textContent = courses.length;
+  if(countEl) countEl.textContent = courses.length ? `${courses.length} course${courses.length>1?'s':''} · ${courses.filter(c=>c.progress>80).length} on track` : 'No courses yet — add your first one!';
+
+  if(!courses.length){
+    if(empty) empty.style.display='block';
+    if(subjectList) subjectList.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">Add courses to see your progress here 📚</div>';
+    return;
+  }
+  if(empty) empty.style.display='none';
+
+  // Course cards
+  const cardsHTML = courses.map((c,i)=>`
+    <div class="course-card" onclick="openCourseDetail(${i})">
+      <div class="course-card-top" style="background:linear-gradient(135deg,${c.color}22,${c.color}11);">
+        <span style="font-size:40px;">${c.emoji}</span>
+        <div style="position:absolute;top:10px;right:10px;">
+          <span class="course-status ${getStatusClass(c.progress)}">
+            ${getStatusLabel(c.progress)}
+          </span>
+        </div>
+      </div>
+      <div class="course-card-body">
+        <div class="course-card-name">${c.name}</div>
+        <div class="course-card-code">${c.code||'No code'} · ${c.credits||3} Credits · ${c.diff||'Medium'}</div>
+        <div class="course-progress-row">
+          <span class="course-progress-label">Progress</span>
+          <span class="course-progress-pct" style="color:${c.color}">${c.progress}%</span>
+        </div>
+        <div class="course-track">
+          <div class="course-fill" style="width:${c.progress}%;background:linear-gradient(90deg,${c.color},${c.color}aa);"></div>
+        </div>
+        <div class="course-meta">
+          <div class="course-meta-item">📅 <span>${c.examDate||'No exam set'}</span></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  if(grid){
+    // Remove old cards (not empty state)
+    [...grid.children].forEach(c=>{ if(!c.id) c.remove(); });
+    grid.insertAdjacentHTML('beforeend',cardsHTML);
+  }
+
+  // Subject list in overview
+  if(subjectList){
+    subjectList.innerHTML = courses.map(c=>`
+      <div class="subject-item">
+        <div class="subject-row">
+          <span class="subject-name"><span class="subject-dot" style="background:${c.color}"></span>${c.name}</span>
+          <span class="subject-pct" style="color:${c.color}">${c.progress}%</span>
+        </div>
+        <div class="subject-track">
+          <div class="subject-fill" style="width:${c.progress}%;background:linear-gradient(90deg,${c.color},${c.color}99);"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function getStatusClass(pct){ return pct>=75?'status-active':pct>=50?'status-ontrack':'status-behind'; }
+function getStatusLabel(pct){ return pct>=75?'On Track':pct>=50?'In Progress':'Needs Focus'; }
+
+function openAddCourse(){
+  document.getElementById('addCourseModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAddCourse(){
+  document.getElementById('addCourseModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('addCourseModal').addEventListener('click',function(e){
+  if(e.target===this)closeAddCourse();
+});
+function selectEmoji(el){
+  document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedEmoji=el.dataset.emoji;
+}
+function selectColor(el){
+  document.querySelectorAll('.color-swatch').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedColor=el.dataset.color;
+}
+function saveCourse(){
+  const name=document.getElementById('cName').value.trim();
+  if(!name){showToast('Please enter a course name','error');return;}
+  const course={
+    name, emoji:selectedEmoji, color:selectedColor,
+    code:document.getElementById('cCode').value.trim(),
+    credits:document.getElementById('cCredits').value||3,
+    startDate:document.getElementById('cStart').value,
+    examDate:document.getElementById('cExam').value,
+    diff:document.getElementById('cDiff').value,
+    progress:Math.floor(Math.random()*60)+10,
+    addedAt:new Date().toISOString()
+  };
+  courses.push(course);
+  try{localStorage.setItem('sw_courses',JSON.stringify(courses));}catch(e){}
+  closeAddCourse();
+  // Clear form
+  document.getElementById('cName').value='';
+  document.getElementById('cCode').value='';
+  document.getElementById('cCredits').value='';
+  // Re-render
+  document.getElementById('coursesGrid').innerHTML='<div class="empty-state" id="emptyState" style="display:none;"></div>';
+  updateCoursesUI();
+  showToast(`"${name}" added successfully! 🎉`,'success');
+}
+function openCourseDetail(i){
+  showToast(`Opening ${courses[i].name}… (connect to backend for full view)`,'info');
+}
+
+// ═══════════ AI PARSER ═══════════
+function handleFileSelect(e){
+  const file = e.target.files[0];
+  if(!file)return;
+  selectedFile=file;
+  const preview=document.getElementById('uploadPreview');
+  document.getElementById('previewName').textContent=file.name;
+  document.getElementById('previewSize').textContent=formatFileSize(file.size);
+  document.getElementById('previewIcon').textContent=file.type.includes('pdf')?'📄':file.type.includes('image')?'🖼️':'📝';
+  preview.classList.add('show');
+  document.getElementById('parseBtn').disabled=false;
+  showToast('File ready! Click "Parse with AI" to extract course info.','info');
+}
+function removeFile(){
+  selectedFile=null;
+  document.getElementById('fileInput').value='';
+  document.getElementById('uploadPreview').classList.remove('show');
+  document.getElementById('parseBtn').disabled=true;
+}
+function formatFileSize(b){
+  if(b<1024)return b+'B';
+  if(b<1024*1024)return (b/1024).toFixed(1)+'KB';
+  return (b/1024/1024).toFixed(1)+'MB';
+}
+
+async function parseSyllabus(){
+  if(!selectedFile)return;
+  document.getElementById('resultPlaceholder').style.display='none';
+  document.getElementById('resultContent').classList.remove('show');
+  document.getElementById('parsingLoader').classList.add('show');
+  document.getElementById('parseBtn').disabled=true;
+
+  // Simulate AI parsing (replace with real API call to your .NET backend)
+  try{
+    // Demo: generate realistic-looking parsed data
+    await new Promise(r=>setTimeout(r,2500));
+    
+    const mockResult = getMockParseResult(selectedFile.name);
+    displayParseResult(mockResult);
+  }catch(err){
+    showToast('Parsing failed. Connect your .NET backend API.','error');
+    document.getElementById('parsingLoader').classList.remove('show');
+    document.getElementById('resultPlaceholder').style.display='flex';
+  }
+  document.getElementById('parseBtn').disabled=false;
+}
+
+function getMockParseResult(filename){
+  const name=filename.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+  return{
+    courseName: name.charAt(0).toUpperCase()+name.slice(1)||'Advanced Mathematics',
+    weeks:16, creditHours:3,
+    topics:[
+      {name:'Introduction & Fundamentals',weeks:'Weeks 1–2'},
+      {name:'Core Concepts & Theory',weeks:'Weeks 3–5'},
+      {name:'Applied Problems',weeks:'Weeks 6–8'},
+      {name:'Mid-term Review',weeks:'Week 9'},
+      {name:'Advanced Topics',weeks:'Weeks 10–13'},
+      {name:'Final Exam Preparation',weeks:'Weeks 14–16'},
+    ],
+    deadlines:[
+      {name:'Assignment 1',date:'Week 4',type:'assign'},
+      {name:'Mid-term Exam',date:'Week 9',type:'exam'},
+      {name:'Project Submission',date:'Week 12',type:'assign'},
+      {name:'Final Exam',date:'Week 16',type:'exam'},
+    ]
+  };
+}
+
+function displayParseResult(data){
+  document.getElementById('parsingLoader').classList.remove('show');
+  document.getElementById('parsedCourseName').textContent=data.courseName;
+  document.getElementById('parsedCourseInfo').innerHTML=`
+    <span class="info-chip">📅 ${data.weeks} Weeks</span>
+    <span class="info-chip">📝 ${data.topics.length} Topics</span>
+    <span class="info-chip">⚠️ ${data.deadlines.length} Deadlines</span>
+    <span class="info-chip">🎓 ${data.creditHours} Credits</span>
+  `;
+  document.getElementById('parsedTopics').innerHTML=data.topics.map((t,i)=>`
+    <div class="topic-item" style="animation-delay:${i*80}ms">
+      <div class="topic-num">${i+1}</div>
+      <span class="topic-name">${t.name}</span>
+      <span class="topic-weeks">${t.weeks}</span>
+    </div>
+  `).join('');
+  const dtypes={exam:'dtype-exam',assign:'dtype-assign',quiz:'dtype-quiz'};
+  const dlabels={exam:'Exam',assign:'Assignment',quiz:'Quiz'};
+  document.getElementById('parsedDeadlines').innerHTML=data.deadlines.map(d=>`
+    <div class="deadline-item">
+      <span class="deadline-icon">${d.type==='exam'?'📝':d.type==='quiz'?'✏️':'📋'}</span>
+      <span class="deadline-name">${d.name}</span>
+      <span class="deadline-date">${d.date}</span>
+      <span class="deadline-type ${dtypes[d.type]||'dtype-assign'}">${dlabels[d.type]||'Task'}</span>
+    </div>
+  `).join('');
+  document.getElementById('resultContent').classList.add('show');
+  // Store for adding
+  window._parsedCourse=data;
+}
+
+function addParsedCourse(){
+  const d=window._parsedCourse;
+  if(!d)return;
+  const course={
+    name:d.courseName,emoji:'📚',color:'#7c3aed',
+    code:'',credits:d.creditHours,
+    examDate:'',diff:'Medium',
+    progress:0,addedAt:new Date().toISOString(),
+    fromParser:true,topics:d.topics,deadlines:d.deadlines
+  };
+  courses.push(course);
+  try{localStorage.setItem('sw_courses',JSON.stringify(courses));}catch(e){}
+  document.getElementById('coursesGrid').innerHTML='<div class="empty-state" id="emptyState" style="display:none;"></div>';
+  updateCoursesUI();
+  showToast(`"${d.courseName}" added to your courses! 🎉`,'success');
+  showView('courses');
+}
+
+function resetParser(){
+  selectedFile=null;
+  document.getElementById('fileInput').value='';
+  document.getElementById('uploadPreview').classList.remove('show');
+  document.getElementById('parseBtn').disabled=true;
+  document.getElementById('resultContent').classList.remove('show');
+  document.getElementById('parsingLoader').classList.remove('show');
+  document.getElementById('resultPlaceholder').style.display='flex';
+  window._parsedCourse=null;
+}
+
+// ═══════════ ANALYTICS ═══════════
+let chartsBuilt=false;
+function buildCharts(){
+  if(chartsBuilt)return;
+  chartsBuilt=true;
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gridColor=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';
+  const textColor=isDark?'#64748b':'#94a3b8';
+
+  // Hours bar chart
+  const hCtx=document.getElementById('hoursChart');
+  if(hCtx){
+    new Chart(hCtx,{
+      type:'bar',
+      data:{
+        labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets:[{
+          label:'Study Hours',
+          data:[3,4.5,2,5,3.5,6,4,2.5,4,3,5.5,4,7,3.5,4,3,5,4.5,3,6.5,4,3,4,3.5,5,4,6.5,3],
+          backgroundColor:'rgba(124,58,237,0.6)',
+          borderColor:'rgba(168,85,247,1)',
+          borderWidth:1,borderRadius:5,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{grid:{color:gridColor},ticks:{color:textColor},beginAtZero:true},
+          x:{grid:{display:false},ticks:{color:textColor,maxTicksLimit:8}}
+        }
+      }
+    });
+  }
+
+  // Pie chart
+  const pCtx=document.getElementById('pieChart');
+  if(pCtx){
+    new Chart(pCtx,{
+      type:'doughnut',
+      data:{
+        labels:['Mathematics','Physics','English','History','Other'],
+        datasets:[{
+          data:[30,22,20,15,13],
+          backgroundColor:['#7c3aed','#0ea5e9','#ec4899','#f59e0b','#10b981'],
+          borderWidth:0,hoverOffset:6,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom',labels:{color:textColor,padding:14,font:{size:11}}}}
+      }
+    });
+  }
+
+  // Heatmap
+  const heatmap=document.getElementById('heatmapGrid');
+  if(heatmap){
+    const levels=['','l1','l2','l3','l4'];
+    let h='';
+    for(let i=0;i<28;i++){
+      const lvl=levels[Math.floor(Math.random()*levels.length)];
+      h+=`<div class="heatmap-cell ${lvl}" title="Day ${i+1}"></div>`;
+    }
+    heatmap.innerHTML=h;
+  }
+}
+
+// ═══════════ AI TUTOR ═══════════
+async function sendTutorMsg(){
+  const input=document.getElementById('tutorInput');
+  const msg=input.value.trim();if(!msg)return;
+  const msgs=document.getElementById('tutorMessages');
+  msgs.innerHTML+=`<div style="background:linear-gradient(135deg,var(--purple),var(--cyan));border-radius:14px;border-bottom-right-radius:4px;padding:12px 16px;font-size:13px;color:#fff;max-width:80%;align-self:flex-end;margin-left:auto;">${msg}</div>`;
+  input.value='';msgs.scrollTop=msgs.scrollHeight;
+  // Call Claude API
+  try{
+    const res=await fetch(CLAUDE_API,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',max_tokens:500,
+        messages:[{role:'user',content:`You are StudyWise AI Tutor, a friendly academic assistant. Be concise and helpful. Student asks: ${msg}`}]
+      })
+    });
+    const data=await res.json();
+    const reply=data?.content?.[0]?.text||'Connect your backend API for AI responses.';
+    msgs.innerHTML+=`<div style="background:var(--input-bg);border:1px solid var(--input-bdr);border-radius:14px;border-bottom-left-radius:4px;padding:12px 16px;font-size:13px;color:var(--text);max-width:80%;">${reply}</div>`;
+  }catch(e){
+    msgs.innerHTML+=`<div style="background:var(--input-bg);border:1px solid var(--input-bdr);border-radius:14px;border-bottom-left-radius:4px;padding:12px 16px;font-size:13px;color:var(--text);max-width:80%;">I'm ready to help! Add your API key to enable AI responses.</div>`;
+  }
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ═══════════ UTILS ═══════════
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  try{localStorage.setItem('sw_theme',isDark?'light':'dark');}catch(e){}
+  chartsBuilt=false;
+}
+function logout(){
+  try{localStorage.removeItem('sw_user');}catch(e){}
+  window.location.href='index.html';
+}
+function goHome(){ window.location.href='home.html'; }
+
+function showToast(msg,type='success'){
+  const t=document.getElementById('swToast');
+  t.textContent=msg;
+  t.className=`sw-toast ${type}`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// Drag & drop on upload zone
+const uz=document.getElementById('uploadZone');
+if(uz){
+  uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag');});
+  uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
+  uz.addEventListener('drop',e=>{
+    e.preventDefault();uz.classList.remove('drag');
+    const file=e.dataTransfer.files[0];
+    if(file){
+      selectedFile=file;
+      document.getElementById('previewName').textContent=file.name;
+      document.getElementById('previewSize').textContent=formatFileSize(file.size);
+      document.getElementById('uploadPreview').classList.add('show');
+      document.getElementById('parseBtn').disabled=false;
+    }
+  });
+}
+function logout(){
+  if(confirm("Are you sure you want to sign out?")){
+    localStorage.removeItem('sw_user');
+    window.location.href = 'home.html';
+  }
+}
+</script>
+</body>
+</html>
